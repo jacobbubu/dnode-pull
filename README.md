@@ -6,10 +6,6 @@
 
 > A [pull-stream](https://github.com/pull-stream/pull-stream) implementation of [dnode](https://github.com/substack/dnode).
 
-## Intro.
-
-This tool is a modification of [typescript-library-starter](https://github.com/alexjoverm/typescript-library-starter), I'm using it to create Node.JS modules.
-
 ## Usage
 
 ```bash

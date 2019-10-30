@@ -13,7 +13,7 @@ declare module 'dnode-protocol' {
       apply(f: Function, args: any[]): void
     }
 
-    type Callback = (this: Proto.Proto, remote: any, self?: Proto.Proto) => void
+    type Callback = (this: Proto, remote: any, self?: Proto) => void
   }
 
   function Proto(cons: Proto.Callback, opts?: any): Proto.Proto

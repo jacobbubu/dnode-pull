@@ -7,7 +7,7 @@ import Pushable = require('pull-pushable')
 
 const defaultLogger = Debug.create('dnode')
 
-type Payload = Buffer
+type Payload = Buffer | string
 
 export type Cons = (() => Record<string, any>) | Record<string, any>
 
@@ -18,7 +18,7 @@ const getId = (() => {
 
 class DNode extends EventEmitter {
   private _source: Pushable.Pushable<Payload> | undefined
-  private _ended = false
+  private _ended: boolean | null = null
   private _bufs: Buffer[] = []
   private _line: string = ''
   private _cons: Function
@@ -48,7 +48,7 @@ class DNode extends EventEmitter {
 
   sink: pull.Sink<Payload> = read => {
     const self = this
-    read(null, function next(endOrError, data) {
+    read(self._ended, function next(endOrError, data: Payload) {
       if (true === endOrError) {
         self._logger.debug('upstream ended')
         self.abort()
@@ -60,7 +60,7 @@ class DNode extends EventEmitter {
         return
       }
 
-      self._logger.debug('got data: %B', data)
+      self._logger.debug('got data: %H', data)
       let row: string
       if (Buffer.isBuffer(data)) {
         if (!self._bufs) self._bufs = []
@@ -93,9 +93,11 @@ class DNode extends EventEmitter {
         if (j < data.length) {
           self._bufs.push(data.slice(j, data.length))
         }
+        // tslint:disable-next-line:strict-type-predicates
       } else if (data && typeof data === 'object') {
         self.handle(data)
       } else {
+        // tslint:disable-next-line:strict-type-predicates
         const buf = typeof data !== 'string' ? String(data) : data
         if (!self._line) self._line = ''
 
